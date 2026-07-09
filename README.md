@@ -6,8 +6,8 @@
 
 ## 주요 기능
 
-- **교사**: 시험 생성(50문항), JSON 일괄 입력, 반별 세션/링크 생성, 결과 통계 및 CSV 다운로드
-- **학생**: 반별 링크로 접속 → 번호/이름 입력 → 50문항 응시 → 서버 채점 후 제출
+- **교사**: 시험 생성·**문제 수정**, JSON 일괄 입력, 반별 세션/링크 생성, 결과 통계 및 CSV 다운로드
+- **학생**: 반별 링크로 접속 → **학번**/이름 입력 → 50문항 응시 → 서버 채점 후 제출
 - **통계**: 평균, 표준편차, 중앙값, 히스토그램, 반별 비교, CLT 설명 문구
 
 ## 기술 스택
@@ -188,8 +188,8 @@ JSON 입력 예시:
 | `/admin` | 관리자 로그인 |
 | `/admin/tests` | 시험 목록 |
 | `/admin/tests/new` | 시험 생성 |
+| `/admin/tests/[testId]/edit` | 시험 문제 수정 |
 | `/admin/tests/[testId]/classes` | 반별 세션 |
-| `/admin/tests/[testId]/results` | 전체 통계 |
 | `/admin/tests/[testId]/results/[classSessionId]` | 반별 상세 |
 | `/test/[sessionCode]` | 학생 시험 |
 
