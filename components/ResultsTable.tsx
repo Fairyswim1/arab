@@ -18,11 +18,7 @@ export default function ResultsTable({ submissions }: ResultsTableProps) {
           <tr>
             <th className="px-4 py-3 text-left font-semibold text-gray-700">학번</th>
             <th className="px-4 py-3 text-left font-semibold text-gray-700">이름</th>
-            <th className="px-4 py-3 text-left font-semibold text-gray-700">총점</th>
-            <th className="px-4 py-3 text-left font-semibold text-gray-700">10문제</th>
-            <th className="px-4 py-3 text-left font-semibold text-gray-700">20문제</th>
-            <th className="px-4 py-3 text-left font-semibold text-gray-700">30문제</th>
-            <th className="px-4 py-3 text-left font-semibold text-gray-700">50문제</th>
+            <th className="px-4 py-3 text-left font-semibold text-gray-700">맞은 개수</th>
             <th className="px-4 py-3 text-left font-semibold text-gray-700">풀이시간</th>
             <th className="px-4 py-3 text-left font-semibold text-gray-700">제출시각</th>
           </tr>
@@ -33,10 +29,6 @@ export default function ResultsTable({ submissions }: ResultsTableProps) {
               <td className="px-4 py-3">{s.student_id}</td>
               <td className="px-4 py-3 font-medium">{s.student_name}</td>
               <td className="px-4 py-3 font-semibold">{s.score_total}</td>
-              <td className="px-4 py-3">{s.score_10}</td>
-              <td className="px-4 py-3">{s.score_20}</td>
-              <td className="px-4 py-3">{s.score_30}</td>
-              <td className="px-4 py-3">{s.score_50}</td>
               <td className="px-4 py-3">{s.duration_seconds}초</td>
               <td className="px-4 py-3 text-gray-600">
                 {new Date(s.submitted_at).toLocaleString("ko-KR")}

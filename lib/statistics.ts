@@ -6,13 +6,14 @@ export function mean(values: number[]): number {
 }
 
 export function standardDeviation(values: number[]): number {
+  return Math.sqrt(variance(values));
+}
+
+export function variance(values: number[]): number {
   if (values.length === 0) return 0;
-  if (values.length === 1) return 0;
 
   const avg = mean(values);
-  const variance =
-    values.reduce((sum, v) => sum + (v - avg) ** 2, 0) / values.length;
-  return Math.sqrt(variance);
+  return values.reduce((sum, v) => sum + (v - avg) ** 2, 0) / values.length;
 }
 
 export function median(values: number[]): number {
@@ -47,7 +48,30 @@ export function frequencyTable(values: number[]): FrequencyEntry[] {
 
   return Array.from(counts.entries())
     .map(([value, count]) => ({ value, count }))
-    .sort((a, b) => a.value - b.value);
+    .sort((a, b) => b.value - a.value);
+}
+
+export interface ScoreFrequencyRow {
+  score: number;
+  count: number;
+  probability: number;
+}
+
+export function scoreFrequencyDistribution(
+  values: number[],
+  maxScore = 50
+): ScoreFrequencyRow[] {
+  const counts = new Map<number, number>();
+  for (const value of values) {
+    counts.set(value, (counts.get(value) ?? 0) + 1);
+  }
+
+  const total = values.length;
+  return Array.from({ length: maxScore + 1 }, (_, score) => ({
+    score,
+    count: counts.get(score) ?? 0,
+    probability: total > 0 ? (counts.get(score) ?? 0) / total : 0,
+  }));
 }
 
 export function histogramBins(

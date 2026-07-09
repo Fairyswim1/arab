@@ -4,9 +4,7 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import AdminPasswordGate from "@/components/AdminPasswordGate";
-import StatCard from "@/components/StatCard";
-import ScoreHistogram from "@/components/ScoreHistogram";
-import ScoreDistributionComparison from "@/components/ScoreDistributionComparison";
+import ResultsSummary from "@/components/ResultsSummary";
 import ResultsTable from "@/components/ResultsTable";
 import { submissionsToCsv, downloadCsv } from "@/lib/csv";
 import type { ClassStats, Submission, Test } from "@/types";
@@ -47,7 +45,7 @@ export default function ClassResultsPage() {
   }
 
   return (
-    <main className="mx-auto min-h-screen max-w-6xl px-4 py-8">
+    <main className="mx-auto min-h-screen max-w-5xl px-4 py-8">
       <AdminPasswordGate>
         <Link
           href={`/admin/tests/${testId}/results`}
@@ -77,36 +75,12 @@ export default function ClassResultsPage() {
 
         {data && (
           <>
-            <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-              <StatCard label="응시자 수" value={data.stats.count} />
-              <StatCard label="평균" value={data.stats.mean.toFixed(2)} />
-              <StatCard label="표준편차" value={data.stats.standardDeviation.toFixed(2)} />
-              <StatCard label="중앙값" value={data.stats.median.toFixed(2)} />
-              <StatCard
-                label="범위"
-                value={`${data.stats.min} ~ ${data.stats.max}`}
-              />
-            </div>
+            <ResultsSummary
+              title={`${data.classSession.class_name} 결과`}
+              scoreTotals={data.stats.scoreTotals}
+            />
 
-            <div className="mb-6 grid gap-6 lg:grid-cols-2">
-              <ScoreHistogram
-                title="총점 히스토그램"
-                values={data.stats.scoreTotals}
-                mean={data.stats.mean}
-                standardDeviation={data.stats.standardDeviation}
-              />
-            </div>
-
-            <div className="mb-6">
-              <ScoreDistributionComparison
-                score10={data.stats.score10}
-                score20={data.stats.score20}
-                score30={data.stats.score30}
-                score50={data.stats.score50}
-              />
-            </div>
-
-            <h2 className="mb-3 text-lg font-semibold">학생별 결과</h2>
+            <h2 className="mb-3 mt-8 text-lg font-semibold">학생별 결과</h2>
             <ResultsTable submissions={data.submissions} />
           </>
         )}
