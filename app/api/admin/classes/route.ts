@@ -88,3 +88,46 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "요청 처리 중 오류가 발생했습니다." }, { status: 400 });
   }
 }
+
+export async function DELETE(request: NextRequest) {
+  if (!(await isAdminAuthenticated())) {
+    return unauthorizedResponse();
+  }
+
+  const classSessionId = request.nextUrl.searchParams.get("classSessionId");
+  const testId = request.nextUrl.searchParams.get("testId");
+
+  if (!classSessionId || !testId) {
+    return NextResponse.json(
+      { error: "classSessionId와 testId가 필요합니다." },
+      { status: 400 }
+    );
+  }
+
+  const { data: session, error: findError } = await getSupabaseAdmin()
+    .from("class_sessions")
+    .select("id, class_name")
+    .eq("id", classSessionId)
+    .eq("test_id", testId)
+    .maybeSingle();
+
+  if (findError) {
+    return NextResponse.json({ error: findError.message }, { status: 500 });
+  }
+
+  if (!session) {
+    return NextResponse.json({ error: "반 세션을 찾을 수 없습니다." }, { status: 404 });
+  }
+
+  const { error: deleteError } = await getSupabaseAdmin()
+    .from("class_sessions")
+    .delete()
+    .eq("id", classSessionId)
+    .eq("test_id", testId);
+
+  if (deleteError) {
+    return NextResponse.json({ error: deleteError.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true, deletedClassName: session.class_name });
+}

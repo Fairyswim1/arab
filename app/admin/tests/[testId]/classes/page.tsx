@@ -14,6 +14,7 @@ export default function ClassSessionsPage() {
   const [className, setClassName] = useState("");
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const [error, setError] = useState("");
   const [baseUrl, setBaseUrl] = useState("");
 
@@ -60,6 +61,33 @@ export default function ClassSessionsPage() {
     setCreating(false);
   }
 
+  async function handleDelete(session: ClassSession) {
+    const confirmed = window.confirm(
+      `"${session.class_name}" 반 세션을 삭제할까요?\n\n해당 반의 학생 링크가 더 이상 작동하지 않으며, 제출된 결과도 함께 삭제됩니다.`
+    );
+
+    if (!confirmed) return;
+
+    setDeletingId(session.id);
+    setError("");
+
+    const res = await fetch(
+      `/api/admin/classes?testId=${testId}&classSessionId=${session.id}`,
+      { method: "DELETE" }
+    );
+
+    const data = await res.json();
+
+    if (!res.ok) {
+      setError(data.error ?? "반 세션 삭제에 실패했습니다.");
+      setDeletingId(null);
+      return;
+    }
+
+    setClassSessions((prev) => prev.filter((s) => s.id !== session.id));
+    setDeletingId(null);
+  }
+
   return (
     <main className="mx-auto min-h-screen max-w-3xl px-4 py-8">
       <AdminPasswordGate>
@@ -99,9 +127,21 @@ export default function ClassSessionsPage() {
                 key={session.id}
                 className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm"
               >
-                <h2 className="text-lg font-bold text-gray-900">{session.class_name}</h2>
-                <p className="mt-1 text-sm text-gray-500">코드: {session.session_code}</p>
-                <div className="mt-3 flex flex-wrap items-center gap-3">
+                <div className="mb-3 flex flex-wrap items-start justify-between gap-3">
+                  <div>
+                    <h2 className="text-lg font-bold text-gray-900">{session.class_name}</h2>
+                    <p className="mt-1 text-sm text-gray-500">코드: {session.session_code}</p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => handleDelete(session)}
+                    disabled={deletingId === session.id}
+                    className="rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 hover:bg-red-100 disabled:opacity-50"
+                  >
+                    {deletingId === session.id ? "삭제 중..." : "삭제"}
+                  </button>
+                </div>
+                <div className="flex flex-wrap items-center gap-3">
                   <code className="rounded bg-gray-100 px-3 py-2 text-sm break-all">{link}</code>
                   <CopyLinkButton url={link} />
                 </div>
