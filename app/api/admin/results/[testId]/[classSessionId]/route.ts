@@ -50,7 +50,7 @@ export async function GET(
     .select("*")
     .eq("test_id", testId)
     .eq("class_session_id", classSessionId)
-    .order("student_number", { ascending: true });
+    .order("student_id", { ascending: true });
 
   if (subError) {
     return NextResponse.json({ error: subError.message }, { status: 500 });

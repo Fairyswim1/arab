@@ -22,7 +22,7 @@ export default function StudentTestPage() {
   const [testData, setTestData] = useState<TestData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
-  const [studentNumber, setStudentNumber] = useState("");
+  const [studentId, setStudentId] = useState("");
   const [studentName, setStudentName] = useState("");
   const [answers, setAnswers] = useState<Record<string, AnswerChoice>>({});
   const [submitting, setSubmitting] = useState(false);
@@ -64,8 +64,8 @@ export default function StudentTestPage() {
       return;
     }
 
-    if (!studentNumber || !studentName.trim()) {
-      setSubmitError("번호와 이름을 입력해주세요.");
+    if (!studentId || !studentName.trim()) {
+      setSubmitError("학번과 이름을 입력해주세요.");
       return;
     }
 
@@ -79,7 +79,7 @@ export default function StudentTestPage() {
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
         sessionCode,
-        studentNumber: Number(studentNumber),
+        studentId,
         studentName: studentName.trim(),
         answers,
         durationSeconds,
@@ -123,7 +123,7 @@ export default function StudentTestPage() {
           <div className="mb-4 text-5xl">✓</div>
           <h1 className="mb-2 text-2xl font-bold text-gray-900">제출 완료</h1>
           <p className="text-gray-600">
-            {testData.className} · {studentName} ({studentNumber}번)
+            {testData.className} · {studentName} (학번 {studentId})
           </p>
           <p className="mt-4 text-sm text-gray-500">
             답안이 성공적으로 제출되었습니다. 창을 닫아도 됩니다.
@@ -147,9 +147,9 @@ export default function StudentTestPage() {
         <section className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
           <h2 className="mb-4 text-lg font-semibold text-gray-900">학생 정보</h2>
           <StudentInfoForm
-            studentNumber={studentNumber}
+            studentId={studentId}
             studentName={studentName}
-            onNumberChange={setStudentNumber}
+            onStudentIdChange={setStudentId}
             onNameChange={setStudentName}
             disabled={submitting}
           />
@@ -181,7 +181,7 @@ export default function StudentTestPage() {
           <div className="mx-auto max-w-2xl">
             <button
               type="submit"
-              disabled={!allAnswered || submitting || !studentNumber || !studentName.trim()}
+              disabled={!allAnswered || submitting || !studentId || !studentName.trim()}
               className="w-full rounded-xl bg-blue-600 py-4 text-lg font-bold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:bg-gray-300"
             >
               {submitting ? "제출 중..." : allAnswered ? "답안 제출" : `미응답 ${50 - answeredCount}문항`}

@@ -43,7 +43,7 @@ CREATE TABLE submissions (
   test_id UUID NOT NULL REFERENCES tests(id) ON DELETE CASCADE,
   class_session_id UUID NOT NULL REFERENCES class_sessions(id) ON DELETE CASCADE,
   student_class TEXT NOT NULL,
-  student_number INTEGER NOT NULL CHECK (student_number > 0),
+  student_id TEXT NOT NULL,
   student_name TEXT NOT NULL,
   answers_json JSONB NOT NULL,
   score_total INTEGER NOT NULL CHECK (score_total BETWEEN 0 AND 50),
@@ -53,7 +53,7 @@ CREATE TABLE submissions (
   score_50 INTEGER NOT NULL CHECK (score_50 BETWEEN 0 AND 50),
   duration_seconds INTEGER NOT NULL CHECK (duration_seconds >= 0),
   submitted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  UNIQUE (class_session_id, student_number, student_name)
+  UNIQUE (class_session_id, student_id, student_name)
 );
 
 CREATE INDEX idx_submissions_test_id ON submissions (test_id);

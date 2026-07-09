@@ -48,7 +48,7 @@ export interface Submission {
   test_id: string;
   class_session_id: string;
   student_class: string;
-  student_number: number;
+  student_id: string;
   student_name: string;
   answers_json: Record<string, AnswerChoice>;
   score_total: number;

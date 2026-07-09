@@ -16,7 +16,7 @@ export default function ResultsTable({ submissions }: ResultsTableProps) {
       <table className="min-w-full divide-y divide-gray-200 text-sm">
         <thead className="bg-gray-50">
           <tr>
-            <th className="px-4 py-3 text-left font-semibold text-gray-700">번호</th>
+            <th className="px-4 py-3 text-left font-semibold text-gray-700">학번</th>
             <th className="px-4 py-3 text-left font-semibold text-gray-700">이름</th>
             <th className="px-4 py-3 text-left font-semibold text-gray-700">총점</th>
             <th className="px-4 py-3 text-left font-semibold text-gray-700">10문제</th>
@@ -30,7 +30,7 @@ export default function ResultsTable({ submissions }: ResultsTableProps) {
         <tbody className="divide-y divide-gray-100">
           {submissions.map((s) => (
             <tr key={s.id} className="hover:bg-gray-50">
-              <td className="px-4 py-3">{s.student_number}</td>
+              <td className="px-4 py-3">{s.student_id}</td>
               <td className="px-4 py-3 font-medium">{s.student_name}</td>
               <td className="px-4 py-3 font-semibold">{s.score_total}</td>
               <td className="px-4 py-3">{s.score_10}</td>

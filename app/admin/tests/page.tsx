@@ -69,6 +69,12 @@ export default function AdminTestsPage() {
                 </div>
                 <div className="flex flex-wrap gap-2">
                   <Link
+                    href={`/admin/tests/${test.id}/edit`}
+                    className="rounded-lg bg-blue-600 px-4 py-2 text-sm font-medium text-white hover:bg-blue-700"
+                  >
+                    문제 수정
+                  </Link>
+                  <Link
                     href={`/admin/tests/${test.id}/classes`}
                     className="rounded-lg bg-gray-100 px-4 py-2 text-sm font-medium hover:bg-gray-200"
                   >

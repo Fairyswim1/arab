@@ -7,14 +7,14 @@ export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
     const sessionCode = body.sessionCode as string;
-    const studentNumber = Number(body.studentNumber);
+    const studentId = (body.studentId as string)?.trim();
     const studentName = (body.studentName as string)?.trim();
     const answers = body.answers as Record<string, string>;
     const durationSeconds = Number(body.durationSeconds);
 
-    if (!sessionCode || !studentName || !studentNumber || studentNumber <= 0) {
+    if (!sessionCode || !studentName || !studentId) {
       return NextResponse.json(
-        { error: "학생 정보와 답안을 모두 입력해주세요." },
+        { error: "학번, 이름, 답안을 모두 입력해주세요." },
         { status: 400 }
       );
     }
@@ -55,7 +55,7 @@ export async function POST(request: NextRequest) {
       .from("submissions")
       .select("id")
       .eq("class_session_id", session.id)
-      .eq("student_number", studentNumber)
+      .eq("student_id", studentId)
       .eq("student_name", studentName)
       .maybeSingle();
 
@@ -87,7 +87,7 @@ export async function POST(request: NextRequest) {
       test_id: session.test_id,
       class_session_id: session.id,
       student_class: session.class_name,
-      student_number: studentNumber,
+      student_id: studentId,
       student_name: studentName,
       answers_json: answers,
       score_total: scores.score_total,

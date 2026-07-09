@@ -12,7 +12,7 @@ export function submissionsToCsv(submissions: Submission[]): string {
   const headers = [
     "제출시각",
     "반",
-    "번호",
+    "학번",
     "이름",
     ...Array.from({ length: 50 }, (_, i) => `${i + 1}번답`),
     "총점",
@@ -32,7 +32,7 @@ export function submissionsToCsv(submissions: Submission[]): string {
     return [
       s.submitted_at,
       s.student_class,
-      s.student_number,
+      s.student_id,
       s.student_name,
       ...answerCols,
       s.score_total,

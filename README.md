@@ -67,7 +67,7 @@ CREATE TABLE submissions (
   test_id UUID NOT NULL REFERENCES tests(id) ON DELETE CASCADE,
   class_session_id UUID NOT NULL REFERENCES class_sessions(id) ON DELETE CASCADE,
   student_class TEXT NOT NULL,
-  student_number INTEGER NOT NULL CHECK (student_number > 0),
+  student_id TEXT NOT NULL,
   student_name TEXT NOT NULL,
   answers_json JSONB NOT NULL,
   score_total INTEGER NOT NULL CHECK (score_total BETWEEN 0 AND 50),
@@ -77,12 +77,14 @@ CREATE TABLE submissions (
   score_50 INTEGER NOT NULL CHECK (score_50 BETWEEN 0 AND 50),
   duration_seconds INTEGER NOT NULL CHECK (duration_seconds >= 0),
   submitted_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  UNIQUE (class_session_id, student_number, student_name)
+  UNIQUE (class_session_id, student_id, student_name)
 );
 
 CREATE INDEX idx_submissions_test_id ON submissions (test_id);
 CREATE INDEX idx_submissions_class_session_id ON submissions (class_session_id);
 ```
+
+기존 DB에 `student_number` 컬럼이 있다면 `supabase/migration_student_id.sql`을 SQL Editor에서 실행하세요.
 
 ## 환경변수 설정
 
@@ -148,7 +150,14 @@ JSON 입력 예시:
 ]
 ```
 
-### 2. 반별 링크 생성
+### 2. 시험 수정
+
+1. 시험 목록에서 **문제 수정** 클릭
+2. 제목, 설명, 50문항 수정 후 **수정 저장**
+
+> 이미 응시한 학생이 있으면, 문제 수정 후에도 기존 점수는 자동 재계산되지 않습니다.
+
+### 3. 반별 링크 생성
 
 1. 시험 목록에서 **반별 세션** 클릭
 2. 반 이름 입력 (예: `3학년 1반`) → **반 세션 생성**
@@ -156,7 +165,7 @@ JSON 입력 예시:
 
 학생 링크 형식: `https://사이트주소/test/{session_code}`
 
-### 3. 결과 확인
+### 4. 결과 확인
 
 1. 시험 목록에서 **결과 보기** 클릭
 2. 전체/반별 필터, 히스토그램, CLT 비교 그래프 확인
@@ -165,11 +174,11 @@ JSON 입력 예시:
 ## 학생 사용 방법
 
 1. 선생님이 공유한 링크로 접속
-2. 번호, 이름 입력
+2. 학번, 이름 입력
 3. 50문항 모두 선택 후 **답안 제출**
 4. **제출 완료** 화면 확인 (점수는 표시되지 않음)
 
-> 같은 반·같은 번호·같은 이름으로 중복 제출할 수 없습니다.
+> 같은 반·같은 학번·같은 이름으로 중복 제출할 수 없습니다.
 
 ## 라우팅 구조
 
