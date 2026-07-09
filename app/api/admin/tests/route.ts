@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { isAdminAuthenticated, unauthorizedResponse } from "@/lib/adminAuth";
 import { getSupabaseAdmin } from "@/lib/supabaseAdmin";
+import { normalizeQuestionsList } from "@/lib/normalizeQuestions";
 import type { QuestionInput } from "@/types";
 
 export async function GET() {
@@ -29,35 +30,23 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
     const title = body.title as string;
     const description = (body.description as string) || null;
-    const questions = body.questions as QuestionInput[];
+    let questions: QuestionInput[];
+
+    try {
+      questions = normalizeQuestionsList(body.questions);
+    } catch (err) {
+      return NextResponse.json(
+        { error: err instanceof Error ? err.message : "문제 형식이 올바르지 않습니다." },
+        { status: 400 }
+      );
+    }
 
     if (!title?.trim()) {
       return NextResponse.json({ error: "시험 제목을 입력해주세요." }, { status: 400 });
     }
 
-    if (!Array.isArray(questions) || questions.length !== 50) {
-      return NextResponse.json(
-        { error: "정확히 50문제를 입력해야 합니다." },
-        { status: 400 }
-      );
-    }
-
     const numbers = new Set<number>();
     for (const q of questions) {
-      if (
-        !q.question_number ||
-        q.question_number < 1 ||
-        q.question_number > 50 ||
-        !q.arabic_word?.trim() ||
-        !q.choice_a?.trim() ||
-        !q.choice_b?.trim() ||
-        (q.answer !== "A" && q.answer !== "B")
-      ) {
-        return NextResponse.json(
-          { error: `문제 ${q.question_number}번 입력이 올바르지 않습니다.` },
-          { status: 400 }
-        );
-      }
       numbers.add(q.question_number);
     }
 

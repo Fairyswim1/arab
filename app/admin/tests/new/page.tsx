@@ -4,6 +4,7 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import AdminPasswordGate from "@/components/AdminPasswordGate";
+import { parseQuestionsInput } from "@/lib/normalizeQuestions";
 import type { AnswerChoice, QuestionInput } from "@/types";
 
 const emptyQuestion = (n: number): QuestionInput => ({
@@ -36,17 +37,12 @@ export default function NewTestPage() {
 
   function applyJson() {
     try {
-      const parsed = JSON.parse(jsonInput) as QuestionInput[];
-      if (!Array.isArray(parsed) || parsed.length !== 50) {
-        setError("JSON은 정확히 50문제 배열이어야 합니다.");
-        return;
-      }
-      const sorted = [...parsed].sort((a, b) => a.question_number - b.question_number);
+      const sorted = parseQuestionsInput(jsonInput);
       setQuestions(sorted);
       setError("");
       setShowJson(false);
-    } catch {
-      setError("JSON 형식이 올바르지 않습니다.");
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "JSON 형식이 올바르지 않습니다.");
     }
   }
 
@@ -106,17 +102,25 @@ export default function NewTestPage() {
                 onClick={() => setShowJson(!showJson)}
                 className="text-sm text-blue-600 hover:underline"
               >
-                {showJson ? "개별 입력으로" : "JSON으로 붙여넣기"}
+                {showJson ? "개별 입력으로" : "JSON/JS로 붙여넣기"}
               </button>
             </div>
 
             {showJson ? (
               <div>
+                <p className="mb-2 text-xs text-gray-500">
+                  JSON 배열 또는{" "}
+                  <code className="rounded bg-gray-100 px-1">export const questions = [...]</code>{" "}
+                  형식 모두 가능합니다. 필드명은{" "}
+                  <code className="rounded bg-gray-100 px-1">id/arabic/choiceA/choiceB</code> 또는{" "}
+                  <code className="rounded bg-gray-100 px-1">question_number/arabic_word/choice_a/choice_b</code>{" "}
+                  를 사용할 수 있습니다.
+                </p>
                 <textarea
                   value={jsonInput}
                   onChange={(e) => setJsonInput(e.target.value)}
                   rows={12}
-                  placeholder='[{"question_number":1,"arabic_word":"أم","choice_a":"아버지","choice_b":"어머니","answer":"B"}, ...]'
+                  placeholder='export const questions = [{ id: 1, arabic: "أم", choiceA: "아버지", choiceB: "어머니", answer: "B" }, ...]'
                   className="mb-3 w-full rounded-lg border border-gray-300 px-4 py-3 font-mono text-sm"
                 />
                 <button
