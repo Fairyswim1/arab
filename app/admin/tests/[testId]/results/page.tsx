@@ -38,7 +38,7 @@ export default function TestResultsPage() {
       : data?.byClass.find((c) => c.classSessionId === filterClassId)?.className ?? "반";
 
   return (
-    <main className="mx-auto min-h-screen max-w-5xl px-4 py-8">
+    <main className="mx-auto min-h-screen max-w-6xl px-4 py-8">
       <AdminPasswordGate>
         <Link href="/admin/tests" className="text-sm text-blue-600 hover:underline">
           ← 시험 목록

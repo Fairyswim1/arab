@@ -45,7 +45,7 @@ export default function ClassResultsPage() {
   }
 
   return (
-    <main className="mx-auto min-h-screen max-w-5xl px-4 py-8">
+    <main className="mx-auto min-h-screen max-w-6xl px-4 py-8">
       <AdminPasswordGate>
         <Link
           href={`/admin/tests/${testId}/results`}
