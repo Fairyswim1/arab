@@ -19,7 +19,9 @@ export default function ClassSessionsPage() {
   const [baseUrl, setBaseUrl] = useState("");
 
   useEffect(() => {
-    setBaseUrl(window.location.origin);
+    // 서버 렌더 시 window가 없으므로 마운트 후에 설정
+    const id = window.setTimeout(() => setBaseUrl(window.location.origin), 0);
+    return () => window.clearTimeout(id);
   }, []);
 
   function loadSessions() {
@@ -35,6 +37,7 @@ export default function ClassSessionsPage() {
 
   useEffect(() => {
     loadSessions();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [testId]);
 
   async function handleCreate(e: React.FormEvent) {

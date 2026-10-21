@@ -27,15 +27,13 @@ export default function ResultsSummary({ title, scoreTotals }: ResultsSummaryPro
   const std = standardDeviation(scoreTotals);
   const distribution = scoreFrequencyDistribution(scoreTotals, 50);
 
-  const tableRows = Array.from({ length: 50 }, (_, i) => {
-    const score = i + 1;
-    const row = distribution.find((d) => d.score === score);
-    return {
-      score,
-      count: row?.count ?? 0,
-      probability: row?.probability ?? 0,
-    };
-  });
+  // 0점부터 50점까지 전부 표시 (distribution은 이미 0..50 순서)
+  const tableRows = distribution;
+
+  // 모든 문항을 1/2로 찍는다고 가정한 이론값 B(50, 1/2)
+  const THEO_MEAN = 25;
+  const THEO_VAR = 12.5;
+  const THEO_SD = Math.sqrt(THEO_VAR);
 
   const chartData = distribution.map((row) => ({
     name: String(row.score),
@@ -48,21 +46,44 @@ export default function ResultsSummary({ title, scoreTotals }: ResultsSummaryPro
 
       <div className="mb-8 overflow-x-auto">
         <table className="mx-auto min-w-[280px] border-collapse text-sm">
+          <thead>
+            <tr className="border border-gray-300 bg-gray-50">
+              <th className="border border-gray-300 px-6 py-2"></th>
+              <th className="border border-gray-300 px-6 py-2 font-medium">실제</th>
+              <th className="border border-gray-300 px-6 py-2 font-medium text-gray-500">
+                이론 B(50, 1/2)
+              </th>
+            </tr>
+          </thead>
           <tbody>
             <tr className="border border-gray-300">
               <td className="border border-gray-300 bg-gray-50 px-6 py-2 font-medium">평균</td>
               <td className="border border-gray-300 px-6 py-2 text-right">{avg.toFixed(4)}</td>
+              <td className="border border-gray-300 px-6 py-2 text-right text-gray-500">
+                {THEO_MEAN.toFixed(4)}
+              </td>
             </tr>
             <tr className="border border-gray-300">
-              <td className="border border-gray-300 bg-gray-50 px-6 py-2 font-medium">분산</td>
+              <td className="border border-gray-300 bg-gray-50 px-6 py-2 font-medium">
+                분산 <span className="text-xs font-normal text-gray-500">(모분산)</span>
+              </td>
               <td className="border border-gray-300 px-6 py-2 text-right">{varValue.toFixed(4)}</td>
+              <td className="border border-gray-300 px-6 py-2 text-right text-gray-500">
+                {THEO_VAR.toFixed(4)}
+              </td>
             </tr>
             <tr className="border border-gray-300">
               <td className="border border-gray-300 bg-gray-50 px-6 py-2 font-medium">표준편차</td>
               <td className="border border-gray-300 px-6 py-2 text-right">{std.toFixed(5)}</td>
+              <td className="border border-gray-300 px-6 py-2 text-right text-gray-500">
+                {THEO_SD.toFixed(5)}
+              </td>
             </tr>
           </tbody>
         </table>
+        <p className="mt-2 text-center text-xs text-gray-500">
+          분산·표준편차는 응시자 전체를 모집단으로 보고 n으로 나눈 값입니다.
+        </p>
       </div>
 
       {scoreTotals.length === 0 ? (

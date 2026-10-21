@@ -29,7 +29,8 @@ export default function StudentTestPage() {
   const [submitted, setSubmitted] = useState(false);
   const [submitError, setSubmitError] = useState("");
 
-  const startTimeRef = useRef<number>(Date.now());
+  // 렌더 중 Date.now() 호출을 피하고, 문항을 불러온 시점에 시작 시각을 기록한다
+  const startTimeRef = useRef<number>(0);
 
   useEffect(() => {
     fetch(`/api/test/${sessionCode}`)
