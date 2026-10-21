@@ -128,3 +128,40 @@ export async function PUT(
     return NextResponse.json({ error: "요청 처리 중 오류가 발생했습니다." }, { status: 400 });
   }
 }
+
+export async function DELETE(
+  _request: NextRequest,
+  { params }: { params: Promise<{ testId: string }> }
+) {
+  if (!(await isAdminAuthenticated())) {
+    return unauthorizedResponse();
+  }
+
+  const { testId } = await params;
+
+  const { data: test, error: findError } = await getSupabaseAdmin()
+    .from("tests")
+    .select("id, title")
+    .eq("id", testId)
+    .maybeSingle();
+
+  if (findError) {
+    return NextResponse.json({ error: findError.message }, { status: 500 });
+  }
+
+  if (!test) {
+    return NextResponse.json({ error: "시험을 찾을 수 없습니다." }, { status: 404 });
+  }
+
+  // questions, class_sessions, submissions는 ON DELETE CASCADE로 함께 삭제된다.
+  const { error: deleteError } = await getSupabaseAdmin()
+    .from("tests")
+    .delete()
+    .eq("id", testId);
+
+  if (deleteError) {
+    return NextResponse.json({ error: deleteError.message }, { status: 500 });
+  }
+
+  return NextResponse.json({ success: true, deletedTitle: test.title });
+}
