@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import AdminPasswordGate from "@/components/AdminPasswordGate";
 import { parseQuestionsInput } from "@/lib/normalizeQuestions";
 import type { AnswerChoice, QuestionInput } from "@/types";
+import sampleQuestions from "@/data/sample-questions.json";
 
 const emptyQuestion = (n: number): QuestionInput => ({
   question_number: n,
@@ -33,6 +34,17 @@ export default function NewTestPage() {
       next[index] = { ...next[index], [field]: value };
       return next;
     });
+  }
+
+  function loadSample() {
+    try {
+      setQuestions(parseQuestionsInput(JSON.stringify(sampleQuestions)));
+      if (!title.trim()) setTitle("아랍어 단어시험");
+      setError("");
+      setShowJson(false);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "샘플을 불러오지 못했습니다.");
+    }
   }
 
   function applyJson() {
@@ -97,13 +109,22 @@ export default function NewTestPage() {
           <div className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
             <div className="mb-4 flex items-center justify-between">
               <h2 className="text-lg font-semibold">문제 입력 (50문항)</h2>
-              <button
-                type="button"
-                onClick={() => setShowJson(!showJson)}
-                className="text-sm text-blue-600 hover:underline"
-              >
-                {showJson ? "개별 입력으로" : "JSON/JS로 붙여넣기"}
-              </button>
+              <div className="flex items-center gap-4">
+                <button
+                  type="button"
+                  onClick={loadSample}
+                  className="text-sm text-green-700 hover:underline"
+                >
+                  샘플 50문항 불러오기
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowJson(!showJson)}
+                  className="text-sm text-blue-600 hover:underline"
+                >
+                  {showJson ? "개별 입력으로" : "JSON/JS로 붙여넣기"}
+                </button>
+              </div>
             </div>
 
             {showJson ? (

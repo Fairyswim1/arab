@@ -5,6 +5,8 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import AdminPasswordGate from "@/components/AdminPasswordGate";
 import ResultsSummary from "@/components/ResultsSummary";
+import ScoreDistributionComparison from "@/components/ScoreDistributionComparison";
+import ClassComparisonChart from "@/components/ClassComparisonChart";
 import type { TestResultsSummary } from "@/types";
 
 export default function TestResultsPage() {
@@ -69,6 +71,32 @@ export default function TestResultsPage() {
             )}
 
             <ResultsSummary title={`${filterLabel} 결과`} scoreTotals={scoreTotals} />
+
+            <div className="mt-8">
+              <ScoreDistributionComparison
+                score10={filtered?.score10 ?? []}
+                score20={filtered?.score20 ?? []}
+                score30={filtered?.score30 ?? []}
+                score50={filtered?.score50 ?? []}
+              />
+            </div>
+
+            {data.byClass.length > 1 && (
+              <div className="mt-8 grid gap-6 lg:grid-cols-2">
+                <ClassComparisonChart
+                  title="반별 평균 (총점)"
+                  dataKey="mean"
+                  byClass={data.byClass}
+                  yLabel="평균"
+                />
+                <ClassComparisonChart
+                  title="반별 표준편차 (총점)"
+                  dataKey="standardDeviation"
+                  byClass={data.byClass}
+                  yLabel="표준편차"
+                />
+              </div>
+            )}
 
             {data.classSessions.length > 0 && (
               <div className="mt-8 space-y-2">

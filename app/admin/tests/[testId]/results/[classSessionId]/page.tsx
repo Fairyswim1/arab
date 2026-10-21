@@ -6,6 +6,7 @@ import { useParams } from "next/navigation";
 import AdminPasswordGate from "@/components/AdminPasswordGate";
 import ResultsSummary from "@/components/ResultsSummary";
 import ResultsTable from "@/components/ResultsTable";
+import ScoreDistributionComparison from "@/components/ScoreDistributionComparison";
 import { submissionsToCsv, downloadCsv } from "@/lib/csv";
 import type { ClassStats, Submission, Test } from "@/types";
 
@@ -79,6 +80,15 @@ export default function ClassResultsPage() {
               title={`${data.classSession.class_name} 결과`}
               scoreTotals={data.stats.scoreTotals}
             />
+
+            <div className="mt-8">
+              <ScoreDistributionComparison
+                score10={data.stats.score10}
+                score20={data.stats.score20}
+                score30={data.stats.score30}
+                score50={data.stats.score50}
+              />
+            </div>
 
             <h2 className="mb-3 mt-8 text-lg font-semibold">학생별 결과</h2>
             <ResultsTable submissions={data.submissions} />
